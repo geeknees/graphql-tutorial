@@ -5,5 +5,6 @@ module Types
     field :description, String, null: false
     field :posted_by, UserType, null: true, method: :user
     field :votes, [Types::VoteType], null: false
+    field :created_at, DateTimeType, null: false
   end
 end

@@ -17,8 +17,33 @@ class Resolvers::LinksSearch < GraphQL::Schema::Resolver
     argument :url_contains, String, required: false
   end
 
+  class LinkOrderBy < ::Types::BaseEnum
+    value 'createdAt_ASC'
+    value 'createdAt_DESC'
+  end
+
   # when "filter" is passed "apply_filter" would be called to narrow the scope
   option :filter, type: LinkFilter, with: :apply_filter
+  option :filter, type: LinkFilter, with: :apply_filter
+  option :first, type: types.Int, with: :apply_first
+  option :skip, type: types.Int, with: :apply_skip
+  option :orderBy, type: LinkOrderBy, default: 'createdAt_DESC'
+
+  def apply_first(scope, value)
+    scope.limit(value)
+  end
+
+  def apply_skip(scope, value)
+    scope.offset(value)
+  end
+
+  def apply_order_by_with_created_at_asc(scope)
+    scope.order('created_at ASC')
+  end
+
+  def apply_order_by_with_created_at_desc(scope)
+    scope.order('created_at DESC')
+  end
 
   # apply_filter recursively loops through "OR" branches
   def apply_filter(scope, value)

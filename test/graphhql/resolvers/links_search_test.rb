@@ -15,6 +15,20 @@ module Resolvers
       Link.create! attributes.merge(user: create_user)
     end
 
+    test 'skip option' do
+      link1 = create_link description: 'test1', url: 'http://test1.com'
+      link2 = create_link description: 'test2', url: 'http://test2.com'
+
+      assert_equal find(skip: 1), [link1]
+    end
+
+    test 'first option' do
+      link1 = create_link description: 'test1', url: 'http://test1.com'
+      link2 = create_link description: 'test2', url: 'http://test2.com'
+
+      assert_equal find(first: 1), [link2]
+    end
+
     test 'filter option' do
       link1 = create_link description: 'test1', url: 'http://test1.com'
       link2 = create_link description: 'test2', url: 'http://test2.com'
@@ -36,6 +50,21 @@ module Resolvers
       )
 
       assert_equal result.map(&:description).sort, [link1, link2, link3].map(&:description).sort
+    end
+
+
+    test 'order by createdAt_ASC' do
+      new = create_link description: 'test1', url: 'http://test1.com', created_at: 1.week.ago
+      old = create_link description: 'test2', url: 'http://test2.com', created_at: 1.month.ago
+
+      assert_equal find(orderBy: 'createdAt_ASC'), [old, new]
+    end
+
+    test 'order by createdAt_DESC' do
+      new = create_link description: 'test1', url: 'http://test1.com', created_at: 1.week.ago
+      old = create_link description: 'test2', url: 'http://test2.com', created_at: 1.month.ago
+
+      assert_equal find(orderBy: 'createdAt_DESC'), [new, old]
     end
   end
 end
